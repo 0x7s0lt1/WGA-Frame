@@ -73,6 +73,7 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
 
         if(isCatalogeLoaded){
             getRandomPainting();
+            setInterval(getRandomPainting,imageChangeDuration);
         }
 
     }, [isCatalogeLoaded]);

@@ -13,7 +13,7 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
 
     let imageChangeInterval: any = null;
 
-    const [imageChangeDuration,setImageChangeDuration] = useState<number>(10000);
+    const [imageChangeDuration,setImageChangeDuration] = useState<number>(3600000); // 1h
     const [isCatalogeLoaded, setIsCatalogeLoaded] = useState<boolean>(false);
     const [imageSrc,setImageSrc] = useState<string>("/img/loading-c.svg");
     const [db,setDB] = useState<CatalogType>();

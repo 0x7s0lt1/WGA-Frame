@@ -1,5 +1,4 @@
 import React, {FC,useState,useRef} from "react";
-import style from './Nav.module.css';
 import Header from "@/modules/Header/Header";
 
 type Props = {
@@ -21,10 +20,9 @@ const Nav: FC<Props> = ({children,captionIsVisible,setCaptionIsVisible}) => {
     return(
         <>
             <Header/>
-            <nav className={style.nav}>
-                <h1>
-                    OPTIONS
-                </h1>
+
+            <div className="nav">
+
                 <fieldset>
                     <legend>FRAME</legend>
                     <table>
@@ -33,7 +31,7 @@ const Nav: FC<Props> = ({children,captionIsVisible,setCaptionIsVisible}) => {
                                 Caption
                             </td>
                             <td className="text-center">
-                                <input type="checkbox" onChange={onCaptionVisibleChange} checked />
+                                <input type="checkbox" onInput={onCaptionVisibleChange} checked />
                             </td>
                         </tr>
                         <tr>
@@ -110,7 +108,8 @@ const Nav: FC<Props> = ({children,captionIsVisible,setCaptionIsVisible}) => {
                     </details>
                 </fieldset>
 
-            </nav>
+                <img className="kocka" src="/img/kockak.gif" alt="kocka" />
+            </div>
 
         </>
     )

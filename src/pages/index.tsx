@@ -15,7 +15,7 @@ const Index : FC = () => {
     const [captionIsVisible, setCaptionIsVisible] = useState<boolean>(true);
 
 
-    let hideTimeout = null;
+    let hideTimeout: any = null;
 
     const onMouseRest = (): void => {
         document.documentElement.style.cursor = "none";

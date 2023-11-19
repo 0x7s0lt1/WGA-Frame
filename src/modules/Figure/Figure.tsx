@@ -1,6 +1,5 @@
 import React, {FC, useEffect, useRef, useState} from "react";
-import axios from "axios";
-import style from './Figure.module.css';
+import CatalogType,{CatalogTypeKeys} from "@/interfaces/CatalogType";
 
 type Props = {
     captionIsVisible: boolean
@@ -12,25 +11,12 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
 
     const figCaptionRef = useRef();
 
-    let imageChangeInterval = null;
+    let imageChangeInterval: any = null;
 
     const [imageChangeDuration,setImageChangeDuration] = useState<number>(10000);
     const [isCatalogeLoaded, setIsCatalogeLoaded] = useState<boolean>(false);
-    const [imageSrc,setImageSrc] = useState<string>("/img/loading-white.svg");
-    const [db,setDB] = useState<object>({
-        achitecture: null,
-        ceramics : null,
-        furniture : null,
-        glassware : null,
-        graphics : null,
-        illumination : null,
-        metalwork : null,
-        mosic : null,
-        painting : null,
-        sculpture : null,
-        stained_glass : null,
-        tapestry : null,
-    });
+    const [imageSrc,setImageSrc] = useState<string>("/img/loading-c.svg");
+    const [db,setDB] = useState<CatalogType>();
 
     const getImageFromURL = async (url: string): Promise<any> => {
 
@@ -49,13 +35,16 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
 
     const getRandomPainting = async (): Promise<any> =>{
 
-        setImageSrc("/img/loading-white.svg");
+        if(db !== undefined){
 
-        const ran = db.painting[Math.floor(Math.random() * db.painting.length )];
+            setImageSrc("/img/loading-c.svg");
 
-        figCaptionRef.current.innerHTML = ran.AUTHOR + " - " + ran.TITLE + "<br>" + ran.DATE;
+            const ran = db.painting[Math.floor(Math.random() * db.painting.length )];
 
-        await getImageFromURL(ran.URL);
+            figCaptionRef.current.innerHTML = ran.AUTHOR + " - " + ran.TITLE + "<br>" + ran.DATE;
+
+            await getImageFromURL(ran.URL);
+        };
     };
 
     useEffect(() => {
@@ -65,11 +54,12 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
                 const response = await fetch('/json/catalog.json');
                 const cataloge = await response.json();
 
-                Object.keys( db ).forEach(key =>{
-                    db[key] = cataloge.filter(i => i.FORM === key);
-                });
+                let obj = {};
+                for (const key in CatalogTypeKeys) {
+                    obj[key] = cataloge.filter(i => i.FORM === key).sort();
+                }
 
-                setDB(db);
+                setDB(obj);
                 setIsCatalogeLoaded(true);
             })();
         }
@@ -93,9 +83,9 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
 
     return(
         <>
-            <figure className={style.fig}>
+            <figure className="fig">
                 <img id="frame" src={imageSrc} alt="empty-wga-frame"/>
-                { captionIsVisible && <figcaption ref={figCaptionRef} className={style.figCaption}></figcaption> }
+                { captionIsVisible && <figcaption ref={figCaptionRef} className="figCaption"></figcaption> }
             </figure>
         </>
     )

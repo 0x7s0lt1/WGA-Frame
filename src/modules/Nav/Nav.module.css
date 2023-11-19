@@ -1,0 +1,16 @@
+.nav{
+    position: absolute;
+    color: white;
+    padding: 10px;
+    left: 0px;
+    top: 50px;
+    max-height: calc(100% - 50px);
+    height:calc(100% - 50px);
+    width: 10%;
+    max-width: 10%;
+    min-width: fit-content;
+    overflow-y: auto;
+    z-index: 100;
+    transition: all 0.5s;
+    background-color: #003366;
+}

@@ -4,9 +4,8 @@ import Header from "@/modules/Header/Header";
 type Props = {
     captionIsVisible: boolean
     setCaptionIsVisible: (value: boolean) => void
-    children: React.ReactNode
 }
-const Nav: FC<Props> = ({children,captionIsVisible,setCaptionIsVisible}) => {
+const Nav: FC<Props> = ({captionIsVisible,setCaptionIsVisible}) => {
 
 
     const onBackGroundOptionCahnge = (event: any): void => {
@@ -58,8 +57,8 @@ const Nav: FC<Props> = ({children,captionIsVisible,setCaptionIsVisible}) => {
                             <tr>
                                 <td>Period</td>
                                 <td>
-                                    <select id="sl_achitecture" name="Period">
-                                        <option selected="">any</option>
+                                    <select id="sl_achitecture" name="Period" defaultValue="any">
+                                        <option value="any">any</option>
                                         <option>Medieval</option>
                                         <option>Early Renaissance</option>
                                         <option>Northern Renaissance</option>
@@ -88,8 +87,8 @@ const Nav: FC<Props> = ({children,captionIsVisible,setCaptionIsVisible}) => {
                             <tr>
                                 <td>Period</td>
                                 <td>
-                                    <select id="sl_ceramics" name="Period">
-                                        <option selected="">any</option>
+                                    <select id="sl_ceramics" name="Period" defaultValue="any">
+                                        <option value="any">any</option>
                                         <option>Medieval</option>
                                         <option>Early Renaissance</option>
                                         <option>Northern Renaissance</option>

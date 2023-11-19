@@ -4,7 +4,7 @@ import {FC, useEffect} from "react";
 type Props = {
     title: string;
     description: string;
-    favIcon: string;
+    favIcon?: string;
 }
 const Meta : FC<Props> = ({
                               title = "WGAF",

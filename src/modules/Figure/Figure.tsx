@@ -9,7 +9,7 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
 
     const BASE_URL = "https://www.wga.hu/";
 
-    const figCaptionRef = useRef();
+    const figCaptionRef = useRef<any>();
 
     let imageChangeInterval: any = null;
 
@@ -35,13 +35,16 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
 
     const getRandomPainting = async (): Promise<any> =>{
 
-        if(db !== undefined){
+        if(db !== undefined && figCaptionRef.current !== undefined) {
 
             setImageSrc("/img/loading-c.svg");
 
             const ran = db.painting[Math.floor(Math.random() * db.painting.length )];
 
-            figCaptionRef.current.innerHTML = ran.AUTHOR + " - " + ran.TITLE + "<br>" + ran.DATE;
+            if(figCaptionRef.current !== null){
+                figCaptionRef.current.innerHTML = ran.AUTHOR + " - " + ran.TITLE + "<br>" + ran.DATE;
+            }
+
 
             await getImageFromURL(ran.URL);
         };
@@ -54,9 +57,9 @@ const Figure: FC<Props> = ({children,captionIsVisible}) => {
                 const response = await fetch('/json/catalog.json');
                 const cataloge = await response.json();
 
-                let obj = {};
+                let obj: any = {};
                 for (const key in CatalogTypeKeys) {
-                    obj[key] = cataloge.filter(i => i.FORM === key).sort();
+                    obj[key] = cataloge.filter((i: any) => i.FORM === key).sort();
                 }
 
                 setDB(obj);

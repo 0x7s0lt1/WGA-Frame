@@ -1,7 +1,7 @@
 import CatalogItemType from "@/interfaces/CatalogItemType";
 
 export enum CatalogTypeKeys {
-    achitecture = "achitecture",
+    achitecture = "architecture",
     ceramis = "ceramis",
     furniture = "furniture",
     glassware = "glassware",

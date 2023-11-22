@@ -2,6 +2,9 @@
 
 :root{
     --wga-blue: #003366;
+    --wga-light-blue: #f0f6ff;
+    --wga-green: #489393;
+    --wga-light-green: #99cccc;
 }
 html,body{
     background-color: black;
@@ -39,8 +42,8 @@ html,body{
     top: 50px;
     max-height: calc(100% - 50px);
     height:calc(100% - 50px);
-    width: 15%;
-    max-width: 15%;
+    width: 12.5%;
+    max-width: 12.5%;
     min-width: fit-content;
     overflow-y: auto;
     z-index: 100;
@@ -69,8 +72,10 @@ html,body{
 }
 .figCaption{
     color: white;
+    background-color: black;
+    padding: 0px 5px;
+    max-width: fit-content;
 }
-
 
 .text-center{
     text-align: center;

@@ -1,7 +1,7 @@
 <div align="center">
   <img width="10%" src="https://raw.githubusercontent.com/0x7s0lt1/WGAF_next/main/public/img/eye.png">
   <h1>WGA in Frame</h1>
-  <p>Show random content from <a href="https://www.wga.hu/">wga.hu</a> over a specific interval.</p>
+  <p>Show random content from <a href="https://www.wga.hu/">wga.hu</a></p>
 </div>
 
 <br/>
@@ -17,7 +17,7 @@ Feature road map:
 - Filter by color palette
 ```
 
-Installing dependencies:
+Install dependencies:
 ```
 npm install
 ```

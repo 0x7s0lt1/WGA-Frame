@@ -1,10 +1,13 @@
-import React, {FC, useEffect, useRef, useState} from "react";
-import CatalogType,{CatalogTypeKeys} from "@/interfaces/CatalogType";
+import {FC, useEffect, useRef, useState} from "react";
+import CatalogType from "@/interfaces/CatalogType";
+
+import IntervalSettingStorage from "@/common/localstorage/IntervalSettingStorage";
 
 type Props = {
+    imageChangeDuration: number
     captionIsVisible: boolean
 }
-const Figure: FC<Props> = ({captionIsVisible}) => {
+const Figure: FC<Props> = ({imageChangeDuration, captionIsVisible}) => {
 
     const BASE_URL = "https://www.wga.hu/";
     const LOADING_IMG = "/img/loading-c.svg";
@@ -13,8 +16,7 @@ const Figure: FC<Props> = ({captionIsVisible}) => {
 
     let imageChangeInterval: any = null;
 
-    const [imageChangeDuration,setImageChangeDuration] = useState<number>(3600000); // 1h
-    const [isCatalogeLoaded, setIsCatalogeLoaded] = useState<boolean>(false);
+    const [isCatalogLoaded, setIsCatalogLoaded] = useState<boolean>(false);
     const [imageSrc,setImageSrc] = useState<string>(LOADING_IMG);
     const [db,setDB] = useState<CatalogType>();
 
@@ -46,24 +48,24 @@ const Figure: FC<Props> = ({captionIsVisible}) => {
 
             await getImageFromURL(ran.URL);
             
-        };
+        }
     };
 
     useEffect(() => {
 
-        if(!isCatalogeLoaded){
+        if(!isCatalogLoaded){
             (async ()=>{
                 const response = await fetch('/json/catalog.json');
-                const cataloge = await response.json();
+                const catalog = await response.json();
 
                 let obj: any = {};
-                cataloge.forEach( (i: any) =>
+                catalog.forEach( (i: any) =>
                     !Array.isArray(obj[i['FORM']]) ?
                         obj[i['FORM']] = [i] :
                         obj[i['FORM']].push(i));
 
                 setDB(obj);
-                setIsCatalogeLoaded(true);
+                setIsCatalogLoaded(true);
             })();
         }
 
@@ -71,27 +73,30 @@ const Figure: FC<Props> = ({captionIsVisible}) => {
 
     useEffect(() => {
 
-        if(isCatalogeLoaded){
-            getRandomPainting();
-            setInterval(getRandomPainting,imageChangeDuration);
+        if(isCatalogLoaded){
+            getRandomPainting()
+                .then(()=> setInterval(getRandomPainting, imageChangeDuration));
         }
 
-    }, [isCatalogeLoaded]);
+    }, [isCatalogLoaded]);
 
     useEffect(() => {
 
         if(imageChangeInterval !== null) clearInterval(imageChangeInterval);
         imageChangeInterval = setInterval(getRandomPainting,imageChangeDuration);
 
-    }, [imageChangeInterval]);
+    }, [imageChangeDuration]);
+
 
     return(
         <>
             <figure className="fig">
-                <img id="frame" src={imageSrc} alt="empty-wga-frame" data-ambient/>
-                { captionIsVisible && 
-                    <figcaption ref={figCaptionRef} className="figCaption"></figcaption> 
-                }
+                <img id="frame" src={imageSrc} alt="empty-wga-frame"/>
+                <figcaption
+                    ref={figCaptionRef}
+                    className={`figCaption ${captionIsVisible ? "" : "d-none" }`}
+                >
+                </figcaption>
             </figure>
         </>
     )

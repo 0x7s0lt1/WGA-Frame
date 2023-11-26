@@ -55,7 +55,7 @@ const Figure: FC<Props> = ({imageChangeDuration, captionIsVisible}) => {
 
         if(!isCatalogLoaded){
             (async ()=>{
-                const response = await fetch('/json/catalog.json');
+                const response = await fetch('/json/catalog.min.json');
                 const json = await response.json();
 
                 let obj: any = {};

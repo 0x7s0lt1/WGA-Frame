@@ -29,7 +29,7 @@ class DisplaySettingStorage implements LocalStorage {
 
             // @ts-ignore
             storage[setting_key] = value;
-            localStorage.setItem(DisplaySettingStorage.STORAGE_KEY, JSON.stringify(storage));
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(storage));
 
             resolve();
         })
@@ -41,9 +41,9 @@ class DisplaySettingStorage implements LocalStorage {
 
     static async getStorage(): Promise<DisplayOptionsType> {
         return new Promise((resolve) => {
-            const storage = localStorage.getItem(DisplaySettingStorage.STORAGE_KEY);
+            const storage = localStorage.getItem(this.STORAGE_KEY);
             if (storage === null) {
-                localStorage.setItem(DisplaySettingStorage.STORAGE_KEY, JSON.stringify(this.defaultOptions));
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.defaultOptions));
                 resolve(this.defaultOptions);
             }
             resolve(JSON.parse(storage!) as DisplayOptionsType);

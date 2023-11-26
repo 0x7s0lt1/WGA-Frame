@@ -42,7 +42,7 @@ const Nav: FC<Props> = ({
 
         const duration = event.target.value;
 
-        setImageChangeDuration(parseInt(event.target.value));
+        setImageChangeDuration(parseInt(duration));
         await IntervalSettingStorage.setInterval(duration);
     }
 

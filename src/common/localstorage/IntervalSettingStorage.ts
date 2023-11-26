@@ -5,7 +5,7 @@ class IntervalSettingStorage implements LocalStorage {
 
     static STORAGE_KEY = "intervalSetting";
 
-    static defaultOptions: "3600000"; // 1h
+    static defaultDuration = "3600000"; // 1h
 
     static async getInterval(): Promise<number>  {
         return new Promise(async (resolve) => {
@@ -16,7 +16,7 @@ class IntervalSettingStorage implements LocalStorage {
     static async setInterval(interval: string|number): Promise<void>{
         return new Promise(async (resolve) => {
 
-            localStorage.setItem(IntervalSettingStorage.STORAGE_KEY, interval as string);
+            localStorage.setItem(this.STORAGE_KEY, interval as string);
 
             resolve();
         })
@@ -25,10 +25,10 @@ class IntervalSettingStorage implements LocalStorage {
 
     static async getStorage(): Promise<number> {
         return new Promise((resolve) => {
-            const interval = localStorage.getItem(IntervalSettingStorage.STORAGE_KEY);
+            const interval = localStorage.getItem(this.STORAGE_KEY);
             if (interval === null) {
-                localStorage.setItem(IntervalSettingStorage.STORAGE_KEY, this.defaultOptions);
-                resolve(parseInt(this.defaultOptions));
+                localStorage.setItem(this.STORAGE_KEY, this.defaultDuration);
+                resolve(parseInt(this.defaultDuration));
             }
 
             resolve(parseInt(interval!));

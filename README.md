@@ -9,7 +9,7 @@
 <br/>
 
 Feature road map:
-```bash
+```
 - Category filter
 - Controller (back/pause/etc)
 - Ambient background
@@ -18,9 +18,13 @@ Feature road map:
 - Filter by color palette
 ```
 
-Run the development server:
+Installing dependencies
+```
+npm install
+```
 
-```bash
+Run the development server:
+```
 npm run dev
 # or
 yarn dev

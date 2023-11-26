@@ -13,8 +13,7 @@ Feature road map:
 - Category filter
 - Controller (back/pause/etc)
 - Ambient background
-- Object detection and summarization
-- Voice naration
+- Color palette
 - Filter by color palette
 ```
 

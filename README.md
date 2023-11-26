@@ -17,7 +17,7 @@ Feature road map:
 - Filter by color palette
 ```
 
-Installing dependencies:
+Install dependencies:
 ```
 npm install
 ```

@@ -187,6 +187,7 @@ const Nav: FC<Props> = ({
                     <img className="m-auto mt-2" src="/img/kockak.gif" alt="kocka" />
                     <Link
                         href={"https://www.wga.hu/"}
+                        target="_blank"
                         className={"font-arial text-white fw-light fb-100 mt-1"}
                     >
                         Web Gallery of Art

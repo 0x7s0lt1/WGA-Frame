@@ -8,7 +8,7 @@
 <br/>
 <br/>
 
-Feature road map:
+Feature roadmap:
 ```
 - Category filter
 - Controller (back/pause/etc)

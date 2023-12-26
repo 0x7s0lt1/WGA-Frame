@@ -1,8 +1,21 @@
 import {FC} from "react";
 
-const Header: FC = () => {
+type Props = {
+    isCursorOnNav: boolean
+    setIsCursorOnNav: (value: boolean) => void
+}
+const Header: FC<Props> = ({
+                        isCursorOnNav,
+                        setIsCursorOnNav
+                    }) => {
     return(
-        <header className="header"></header>
+        <header
+            className="header"
+            onMouseEnter={() => setIsCursorOnNav(true)}
+            onMouseLeave={() => setIsCursorOnNav(false)}
+        >
+
+        </header>
     )
 }
 

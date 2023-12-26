@@ -1,8 +1,11 @@
 import {FC, useEffect} from "react";
 import Header from "@/modules/Header/Header";
 import Link from "next/link";
+
 import DisplaySettingStorage from "@/common/localstorage/DisplaySettingStorage";
 import IntervalSettingStorage from "@/common/localstorage/IntervalSettingStorage";
+
+import HistoryItemType from "@/interfaces/HistoryItemType";
 
 type Props = {
     imageChangeDuration: number
@@ -11,6 +14,14 @@ type Props = {
     setCaptionIsVisible: (value: boolean) => void
     backgroundColor: string
     setBackgroundColor: (value: string) => void
+    isCursorOnNav: boolean
+    setIsCursorOnNav: (value: boolean) => void
+    history: HistoryItemType[]
+    setHistory: (value: HistoryItemType[]) => void
+    currentItem: HistoryItemType | null
+    setCurrentItem: (value: HistoryItemType | null) => void
+    isPaused: boolean,
+    setIsPaused: (value: boolean) => void
 }
 const Nav: FC<Props> = ({
     imageChangeDuration,
@@ -18,7 +29,15 @@ const Nav: FC<Props> = ({
     captionIsVisible,
     backgroundColor,
     setCaptionIsVisible,
-    setBackgroundColor
+    setBackgroundColor,
+    isCursorOnNav,
+    setIsCursorOnNav,
+    history,
+    setHistory,
+    currentItem,
+    setCurrentItem,
+    isPaused,
+    setIsPaused
 }) => {
 
 
@@ -46,15 +65,36 @@ const Nav: FC<Props> = ({
         await IntervalSettingStorage.setInterval(duration);
     }
 
+    // Controller
+    const handlePrev = () => {
+        setCurrentItem( history[history.indexOf(currentItem!) - 1]);
+    };
+
+    const handlePlayPause = () => {
+        setIsPaused(!isPaused);
+    };
+
+    const handleNext = () => {
+        setCurrentItem( history[history.indexOf(currentItem!) + 1]);
+    };
+
+
     useEffect(() => {
         document.body.style.backgroundColor = backgroundColor;
     }, [backgroundColor]);
 
     return(
         <>
-            <Header/>
+            <Header
+                isCursorOnNav={isCursorOnNav}
+                setIsCursorOnNav={setIsCursorOnNav}
+            />
 
-            <div className="nav">
+            <div
+                className="nav"
+                onMouseEnter={() => setIsCursorOnNav(true)}
+                onMouseLeave={() => setIsCursorOnNav(false)}
+            >
 
                 <fieldset className={'border-green mt-5'}>
                     <legend>DISPLAY</legend>
@@ -110,6 +150,41 @@ const Nav: FC<Props> = ({
                                     <option value="43200000">12h</option>
                                     <option value="86400000">24h</option>
                                 </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </fieldset>
+
+                <fieldset className={"mt-2 border-green"}>
+                    <legend>Control</legend>
+                    <table className={"w-100"}>
+                        <tbody>
+                        <tr >
+                            <td className="text-center">
+                              <button 
+                              className="btn-green"
+                              onClick={handlePrev}
+                              disabled={history.indexOf(currentItem!) === 0}
+                              >
+                                 back
+                                </button>
+                            </td>
+                            <td className="text-center">
+                              <button 
+                              className="btn-green"
+                              onClick={handlePlayPause}
+                              > 
+                                { isPaused ? "play" : "pause" } 
+                              </button>
+                            </td>
+                            <td className="text-center">
+                              <button 
+                              className="btn-green"
+                              onClick={handleNext}
+                              disabled={history.indexOf(currentItem!) === history.length - 1}
+                              > next 
+                              </button>
                             </td>
                         </tr>
                         </tbody>

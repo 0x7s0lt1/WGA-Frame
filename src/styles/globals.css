@@ -5,6 +5,7 @@
     --wga-light-blue: #f0f6ff;
     --wga-green: #489393;
     --wga-light-green: #99cccc;
+    --wga-orange: #ff6600;
 }
 
 html,body{
@@ -80,6 +81,17 @@ html,body{
     transform: translateX(-50%);
 }
 
+
+.btn-green{
+    background-color: var(--wga-light-green);
+    padding: 2.5px;
+    border-radius: 1px solid var(--wga-blue);
+}
+.btn-green:hover{
+    background-color: var(--wga-orange);
+    color: white;
+    cursor: pointer;
+}
 
 .w-100{
     width: 100%;

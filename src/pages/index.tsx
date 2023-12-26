@@ -10,14 +10,25 @@ import Figure from "@/modules/Figure/Figure";
 import DisplaySettingStorage from "@/common/localstorage/DisplaySettingStorage";
 import IntervalSettingStorage from "@/common/localstorage/IntervalSettingStorage";
 
+import HistoryItemType from "@/interfaces/HistoryItemType";
 
 const Index : FC = () => {
 
     const [isMouseMoving, setIsMouseMoving] = useState<boolean>(false);
+    const [isCursorOnNav, setIsCursorOnNav] = useState<boolean>(false);
     const [isMenuHidden, setIsMenuHidden] = useState<boolean>(false);
+
+    // DisplayOptions
     const [captionIsVisible, setCaptionIsVisible] = useState(true);
     const [backgroundColor, setBackgroundColor] = useState<string>("black");
+
+    // Interval
     const [imageChangeDuration,setImageChangeDuration] = useState<number>( 3600000 ); // 1h
+
+    // Controller
+    const [history, setHistory] = useState<HistoryItemType[]>([]);
+    const [currentItem, setCurrentItem] = useState<HistoryItemType | null>(null);
+    const [isPaused, setIsPaused] = useState<boolean>(false);
 
     let hideTimeout: any = null;
 
@@ -32,8 +43,10 @@ const Index : FC = () => {
             setIsMenuHidden(false);
         }
 
-        if(hideTimeout) clearTimeout(hideTimeout);
-        hideTimeout = setTimeout(onMouseRest,5000);
+        if(!isCursorOnNav){
+            if(hideTimeout) clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(onMouseRest,5000);
+        }
 
     };
 
@@ -50,6 +63,13 @@ const Index : FC = () => {
 
     },[]);
 
+    useEffect(() => {
+        if(isCursorOnNav){
+            clearTimeout(hideTimeout);
+            setIsMenuHidden(false);
+        }
+    }, [isCursorOnNav]);
+
     return (
         <>
             <MainLayout>
@@ -64,12 +84,25 @@ const Index : FC = () => {
                         setCaptionIsVisible={setCaptionIsVisible}
                         backgroundColor={backgroundColor}
                         setBackgroundColor={setBackgroundColor}
-                    /> 
+                        isCursorOnNav={isCursorOnNav}
+                        setIsCursorOnNav={setIsCursorOnNav}
+                        history={history}
+                        setHistory={setHistory}
+                        currentItem={currentItem}
+                        setCurrentItem={setCurrentItem}
+                        isPaused={isPaused}
+                        setIsPaused={setIsPaused}
+                    />
                 }
 
                 <Figure
                     imageChangeDuration={imageChangeDuration}
                     captionIsVisible={captionIsVisible}
+                    isPaused={isPaused}
+                    history={history}
+                    setHistory={setHistory}
+                    currentItem={currentItem}
+                    setCurrentItem={setCurrentItem}
                 />
 
             </MainLayout>

@@ -11,7 +11,7 @@ class DisplaySettingStorage implements LocalStorage {
 
     static defaultOptions: DisplayOptionsType = {
         captionIsVisible: true,
-        backgroundColor: "black"
+        backgroundColor: "#99cccc"
     };
 
     static async getSetting(setting_key: string): Promise<any>  {

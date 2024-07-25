@@ -20,6 +20,7 @@ const Index : FC = () => {
 
     // DisplayOptions
     const [captionIsVisible, setCaptionIsVisible] = useState(true);
+    const [ambientIsVisible, setAmbientIsVisible] = useState(true);
     const [backgroundColor, setBackgroundColor] = useState<string>("black");
 
     // Interval
@@ -57,6 +58,7 @@ const Index : FC = () => {
 
         (async ()=>{
             setCaptionIsVisible(await DisplaySettingStorage.getSetting(DisplaySettingStorage.CAPTION_IS_VISIBLE_KEY));
+            setAmbientIsVisible(await DisplaySettingStorage.getSetting(DisplaySettingStorage.AMBIENT_IS_VISIBLE_KEY));
             setBackgroundColor(await DisplaySettingStorage.getSetting(DisplaySettingStorage.BACKGROUND_COLOR_KEY));
             setImageChangeDuration(await IntervalSettingStorage.getInterval());
         })();
@@ -82,6 +84,8 @@ const Index : FC = () => {
                         setImageChangeDuration={setImageChangeDuration}
                         captionIsVisible={captionIsVisible}
                         setCaptionIsVisible={setCaptionIsVisible}
+                        ambientIsVisible={ambientIsVisible}
+                        setAmbientIsVisible={setAmbientIsVisible}
                         backgroundColor={backgroundColor}
                         setBackgroundColor={setBackgroundColor}
                         isCursorOnNav={isCursorOnNav}
@@ -98,6 +102,7 @@ const Index : FC = () => {
                 <Figure
                     imageChangeDuration={imageChangeDuration}
                     captionIsVisible={captionIsVisible}
+                    ambientIsVisible={ambientIsVisible}
                     isPaused={isPaused}
                     history={history}
                     setHistory={setHistory}

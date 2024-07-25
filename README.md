@@ -8,15 +8,6 @@
 <br/>
 <br/>
 
-Feature roadmap:
-```
-- Category filter
-- Controller (back/pause/etc)
-- Ambient background
-- Color palette
-- Filter by color palette
-```
-
 Install dependencies:
 ```
 npm install

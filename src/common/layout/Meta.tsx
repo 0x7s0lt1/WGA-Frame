@@ -18,6 +18,7 @@ const Meta : FC<Props> = ({
             <title>{title}</title>
             <meta name="description" content={description} />
             <link rel="icon" href={favIcon} />
+            <script src="/js/ambient.min.js"></script>
 
         </Head>
     )

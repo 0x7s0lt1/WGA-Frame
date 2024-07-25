@@ -12,6 +12,8 @@ type Props = {
     setImageChangeDuration: (value: number) => void
     captionIsVisible: boolean
     setCaptionIsVisible: (value: boolean) => void
+    ambientIsVisible: boolean
+    setAmbientIsVisible: (value: boolean) => void
     backgroundColor: string
     setBackgroundColor: (value: string) => void
     isCursorOnNav: boolean
@@ -27,6 +29,8 @@ const Nav: FC<Props> = ({
     imageChangeDuration,
     setImageChangeDuration,
     captionIsVisible,
+    ambientIsVisible,
+    setAmbientIsVisible,
     backgroundColor,
     setCaptionIsVisible,
     setBackgroundColor,
@@ -55,6 +59,14 @@ const Nav: FC<Props> = ({
 
         setCaptionIsVisible(checked);
         await DisplaySettingStorage.setSetting(DisplaySettingStorage.CAPTION_IS_VISIBLE_KEY, checked);
+    };
+
+    const onAmbientVisibleChange = async (event: any): Promise<void> => {
+
+        const checked = !!event.target.checked;
+
+        setAmbientIsVisible(checked);
+        await DisplaySettingStorage.setSetting(DisplaySettingStorage.AMBIENT_IS_VISIBLE_KEY, checked);
     };
 
     const onImageChangeDurationChange = async (event: any): Promise<void> => {
@@ -100,30 +112,42 @@ const Nav: FC<Props> = ({
                     <legend>DISPLAY</legend>
                     <table>
                         <tbody>
-                            <tr>
-                                <td>
-                                    Caption
-                                </td>
-                                <td className="text-center">
-                                    <input
-                                        type="checkbox"
-                                        checked={captionIsVisible}
-                                        onChange={onCaptionVisibleChange}
-                                    />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Background
-                                </td>
-                                <td className="text-center">
-                                    <input
-                                        type="color"
-                                        value={backgroundColor}
-                                        onInput={onBackGroundColorChange}
-                                    />
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                Caption
+                            </td>
+                            <td className="text-center">
+                                <input
+                                    type="checkbox"
+                                    checked={captionIsVisible}
+                                    onChange={onCaptionVisibleChange}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Ambient light
+                            </td>
+                            <td className="text-center">
+                                <input
+                                    type="checkbox"
+                                    checked={ambientIsVisible}
+                                    onChange={onAmbientVisibleChange}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Background
+                            </td>
+                            <td className="text-center">
+                                <input
+                                    type="color"
+                                    value={backgroundColor}
+                                    onInput={onBackGroundColorChange}
+                                />
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </fieldset>

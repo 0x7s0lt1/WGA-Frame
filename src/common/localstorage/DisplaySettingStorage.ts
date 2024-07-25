@@ -7,6 +7,7 @@ class DisplaySettingStorage implements LocalStorage {
     static STORAGE_KEY = "displaySetting";
 
     static CAPTION_IS_VISIBLE_KEY = "captionIsVisible";
+    static AMBIENT_IS_VISIBLE_KEY = "ambientIsVisible";
     static BACKGROUND_COLOR_KEY = "backgroundColor";
 
     static defaultOptions: DisplayOptionsType = {

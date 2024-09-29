@@ -8,6 +8,11 @@
     --wga-orange: #ff6600;
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
 html,body{
     background-color: black;
     max-width: 100vw;
@@ -61,12 +66,29 @@ html,body{
     max-height: 95vh;
     transform: translate(-50%, -50%);
 }
-.fig img{
+#frame{
     max-width: 90vw;
     max-height: 90vh;
     min-height: 90vh;
     object-fit: contain;
+    position: relative;
+    z-index: 2;
 }
+#frame-bg{
+    max-width: 90vw;
+    max-height: 90vh;
+    min-height: 90vh;
+    object-fit: contain;
+    /*//bottom: -30px;!* amount shadow should extend below main image *!*/
+    filter: blur(20px);/* this is the magic part */
+    height: 100%;
+    left: 0;
+    position: absolute;
+    transform: scale(1.01);/* optional */
+    width: 100%;
+    z-index: 1;
+}
+
 .figCaption{
     color: white;
     background-color: black;

@@ -27,13 +27,11 @@ const Figure: FC<Props> = ({
     const PROXY_URL = "https://zsoltfehervari.dev/api/proxy/?url=";
     const LOADING_IMG = "/img/loading-c.svg";
 
-    let dataAttribute = "";
     let imageChangeInterval: any = null;
 
     const figCaptionRef = useRef<any>();
 
     const [isCatalogLoaded, setIsCatalogLoaded] = useState<boolean>(false);
-    const [ambientElement, setAmbientElement] = useState(null);
     const [imageSrc,setImageSrc] = useState<string>(LOADING_IMG);
     const [catalog,setCatalog] = useState<CatalogType>();
 
@@ -155,36 +153,11 @@ const Figure: FC<Props> = ({
     }, [currentItem]);
 
 
-    useEffect(() => {
-
-        if(isCatalogLoaded){
-
-            if(ambientElement === null) {
-                // @ts-ignore
-                const ambient = new Ambient({insertCSS: false});
-                setAmbientElement(ambient.mount()[0])
-            }
-
-            if(ambientElement !== null) {
-
-                if (ambientIsVisible) {
-                    // @ts-ignore
-                    ambientElement.enable();
-                } else {
-                    // @ts-ignore
-                    ambientElement.disable();
-                }
-            }
-
-        }
-
-    }, [ambientIsVisible, imageSrc]);
-
-
     return(
         <>
             <figure className="fig">
-                <img id="frame" className="ambient__visible" src={imageSrc} alt="empty-wga-frame" data-ambient />
+                <img id="frame-bg" className={ambientIsVisible ? "" : "d-none"} src={imageSrc} />
+                <img id="frame" src={imageSrc} alt="empty-wga-frame" />
                 <figcaption
                     ref={figCaptionRef}
                     className={`figCaption ${captionIsVisible ? "" : "d-none" }`}

@@ -12,7 +12,7 @@ const roboto = Roboto({ weight: '100', subsets: ['latin'] })
 
 export default function Figure(){
 
-    let imageChangeInterval = useRef<any>(null);
+    let imageChangeInterval = useRef<any>();
 
     const { catalog, isCatalogLoaded } = useCatalog();
     const { captionIsVisible, ambientIsVisible } = useSettings();
@@ -25,15 +25,15 @@ export default function Figure(){
 
     const getRandomPainting = async (): Promise<any> =>{
 
-        if(catalog !== undefined && figCaptionRef.current !== undefined) {
+        if(catalog && figCaptionRef.current !== undefined) {
 
             setImageSrc(LOADING_IMG);
 
-            const ran_item = catalog.painting[Math.floor(Math.random() * catalog.painting.length )];
+            const { AUTHOR, TITLE, DATE, URL } = catalog.painting[ Math.floor(Math.random() * catalog.painting.length ) ];;
 
             const item: HistoryItemType = {
-                name: `${ran_item.AUTHOR} - ${ran_item.TITLE} - ${ran_item.DATE}`, 
-                url: await getImageFromURL(ran_item.URL),
+                name: `${AUTHOR} - ${TITLE} - ${DATE}`,
+                url: await getImageFromURL(URL),
             };
 
             if(figCaptionRef.current !== null){
@@ -45,7 +45,6 @@ export default function Figure(){
 
         }
     };
-
 
     useEffect(() => {
         

@@ -1,15 +1,7 @@
 "use client";
-import { useState } from "react";
+import {useContext} from "react";
+import {CursorContext} from "@/contexts/cursor-provider";
 export default function useCursor(){
 
-    const [isMouseMoving, setIsMouseMoving] = useState<boolean>(false);
-    const [isCursorOnNav, setIsCursorOnNav] = useState<boolean>(false);
-
-    return{
-        isMouseMoving,
-        setIsMouseMoving,
-        isCursorOnNav,
-        setIsCursorOnNav
-    }
-
+    return useContext(CursorContext);
 }

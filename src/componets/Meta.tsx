@@ -9,6 +9,7 @@ type Props = {
 export default function Meta({title = "WGA - Frame",description = "The Web Gallery of Art in a Frame", favIcon = "/img/favicon.ico" }: Props){
 
     const { backgroundColor } = useSettings();
+
     return (
         <Head>
             <title>{title}</title>

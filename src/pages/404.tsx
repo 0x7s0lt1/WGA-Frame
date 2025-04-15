@@ -19,11 +19,12 @@ export default function Custom404() {
     return (
        <div className={"flex item-center w-screen h-screen"}>
            <div className={"flex flex-wrap item-center"}>
-
                <Link href="/">
                    <img src={ERROR_IMG} alt={"404"} height={"450"} />
                </Link>
-               <h1 className={` ${roboto.className} color-white text-center bg-black fb-100 mt-2`}>404 Not Found</h1>
+               <h1 className={` ${roboto.className} color-white text-center bg-black fb-100 mt-2`}>
+                   404 Not Found
+               </h1>
            </div>
        </div>
     )

@@ -69,6 +69,7 @@ input[type="checkbox"] {
     min-height: 90vh;
     object-fit: contain;
     position: relative;
+    /*width: 90vw;*/
     z-index: 2;
 }
 #frame-bg{
@@ -83,6 +84,7 @@ input[type="checkbox"] {
     position: absolute;
     transform: scale(1.01);
     /*width: 100%;*/
+    /*width: 90vw;*/
     z-index: 1;
 }
 
@@ -90,6 +92,7 @@ input[type="checkbox"] {
     padding: 0px 5px;
     max-width: fit-content;
     position: relative;
+    /*margin: 0px auto;*/
     z-index: 3;
 }
 

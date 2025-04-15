@@ -1,4 +1,4 @@
-import CatalogItemType from "@/interfaces/CatalogItemType";
+import CatalogItemType from "@/types/catalog/CatalogItemType";
 
 export enum CatalogTypeKeys {
     achitecture = "architecture",

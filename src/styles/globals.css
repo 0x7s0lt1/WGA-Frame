@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
-
 :root{
     --wga-blue: #003366;
     --wga-light-blue: #f0f6ff;
@@ -20,11 +18,9 @@ html,body{
     min-height: 100vh;
     min-width: 100vw;
     overflow: hidden;
-    font-family: 'Roboto Condensed', sans-serif;
 }
 
 .header{
-    background-color: var(--wga-blue);
     background-image: url(/img/header.gif);
     background-repeat: no-repeat;
     background-size: contain;
@@ -40,10 +36,7 @@ html,body{
 
 .nav{
     position: fixed;
-    display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
-    color: white;
     padding: 10px;
     left: 0px;
     top: 50px;
@@ -55,7 +48,11 @@ html,body{
     overflow-y: auto;
     z-index: 100;
     transition: all 0.5s;
-    background-color: var(--wga-blue);
+}
+
+input[type="checkbox"] {
+    color: white;
+    accent-color: var(--wga-green);
 }
 
 .fig{
@@ -80,20 +77,20 @@ html,body{
     min-height: 90vh;
     object-fit: contain;
     /*//bottom: -30px;!* amount shadow should extend below main image *!*/
-    filter: blur(20px);/* this is the magic part */
+    filter: blur(20px);
     height: 100%;
     left: 0;
     position: absolute;
-    transform: scale(1.01);/* optional */
-    width: 100%;
+    transform: scale(1.01);
+    /*width: 100%;*/
     z-index: 1;
 }
 
 .figCaption{
-    color: white;
-    background-color: black;
     padding: 0px 5px;
     max-width: fit-content;
+    position: relative;
+    z-index: 3;
 }
 
 .nav-footer{
@@ -118,6 +115,30 @@ html,body{
 .w-100{
     width: 100%;
 }
+.w-screen{
+    width: 100vw;
+}
+.h-screen{
+    height: 100vh;
+}
+
+.d-none{
+    display: none !important;
+}
+.flex{
+    display: flex;
+}
+.flex-wrap{
+    flex-wrap: wrap;
+}
+.fb-100{
+    flex-basis: 100%;
+}
+.item-center{
+    align-items: center;
+    justify-content: center;
+}
+
 .m-auto{
     margin: 0px auto;
 }
@@ -137,11 +158,8 @@ html,body{
     margin-top: 50px;
 }
 
-.text-white{
+.color-white{
     color: white;
-}
-.td-none{
-    text-decoration: none;
 }
 .text-center{
     text-align: center;
@@ -153,21 +171,14 @@ html,body{
     font-weight: 300;
 }
 
-.d-none{
-    display: none !important;
-}
-.d-flex{
-    display: flex;
-}
-
-.flex-wrap{
-    flex-wrap: wrap;
-}
-.fb-100{
-    flex-basis: 100%;
+.bg-black{
+    background-color: black;
 }
 .bg-light-green{
     background-color: var(--wga-light-green);
+}
+.bg-wga-blue{
+    background-color: var(--wga-blue);
 }
 .border-green{
     border: 2px solid var(--wga-green);

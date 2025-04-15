@@ -1,118 +1,68 @@
 "use client"
 
-import {FC, useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
-import MainLayout from "@/common/layout/MainLayout";
-import Meta from "@/common/layout/Meta";
-import Nav from "@/modules/Nav/Nav";
-import Figure from "@/modules/Figure/Figure";
+import Meta from "@/componets/Meta";
+import Nav from "@/componets/Nav";
+import Figure from "@/componets/Figure";
+import useCursor from "@/hooks/use-cursor";
+import SettingsProvider from "@/contexts/settings-provider";
+import HistoryProvider from "@/contexts/history-provider";
+import ControlProvider from "@/contexts/control-provider";
 
-import DisplaySettingStorage from "@/common/localstorage/DisplaySettingStorage";
-import IntervalSettingStorage from "@/common/localstorage/IntervalSettingStorage";
 
-import HistoryItemType from "@/interfaces/HistoryItemType";
+export default function Index(){
 
-const Index : FC = () => {
+    let hideTimeout = useRef<any>(null);
 
-    const [isMouseMoving, setIsMouseMoving] = useState<boolean>(false);
-    const [isCursorOnNav, setIsCursorOnNav] = useState<boolean>(false);
+    const { isMouseMoving, isCursorOnNav } = useCursor();
     const [isMenuHidden, setIsMenuHidden] = useState<boolean>(false);
 
-    // DisplayOptions
-    const [captionIsVisible, setCaptionIsVisible] = useState(true);
-    const [ambientIsVisible, setAmbientIsVisible] = useState(true);
-    const [backgroundColor, setBackgroundColor] = useState<string>("black");
 
-    // Interval
-    const [imageChangeDuration,setImageChangeDuration] = useState<number>( 3600000 ); // 1h
-
-    // Controller
-    const [history, setHistory] = useState<HistoryItemType[]>([]);
-    const [currentItem, setCurrentItem] = useState<HistoryItemType | null>(null);
-    const [isPaused, setIsPaused] = useState<boolean>(false);
-
-    let hideTimeout: any = null;
-
-    const onMouseRest = (): void => {
+    const onMouseRest = () => {
         document.documentElement.style.cursor = "none";
         setIsMenuHidden(true);
     };
 
-    const onMouseMove = (): void => {
+    const onMouseMove = () => {
         if(!isMouseMoving){
             document.documentElement.style.cursor = "default";
             setIsMenuHidden(false);
         }
 
         if(!isCursorOnNav){
-            if(hideTimeout) clearTimeout(hideTimeout);
-            hideTimeout = setTimeout(onMouseRest,5000);
+            if(hideTimeout.current) clearTimeout(hideTimeout.current);
+            hideTimeout.current = setTimeout(onMouseRest,5000);
         }
 
     };
 
-
-    useEffect(() => {
+    useEffect(()=>{
 
         window.addEventListener("mousemove", onMouseMove, false);
 
-        (async ()=>{
-            setCaptionIsVisible(await DisplaySettingStorage.getSetting(DisplaySettingStorage.CAPTION_IS_VISIBLE_KEY));
-            setAmbientIsVisible(await DisplaySettingStorage.getSetting(DisplaySettingStorage.AMBIENT_IS_VISIBLE_KEY));
-            setBackgroundColor(await DisplaySettingStorage.getSetting(DisplaySettingStorage.BACKGROUND_COLOR_KEY));
-            setImageChangeDuration(await IntervalSettingStorage.getInterval());
-        })();
+        return () => {
+            window.removeEventListener("mousemove", onMouseMove, false);
+        }
 
     },[]);
 
     useEffect(() => {
         if(isCursorOnNav){
-            clearTimeout(hideTimeout);
+            clearTimeout(hideTimeout.current);
             setIsMenuHidden(false);
         }
     }, [isCursorOnNav]);
 
     return (
-        <>
-            <MainLayout>
-
-                <Meta title={"WGAF"} description={"Web Gallery of Art in Frame"} />
-
-                { !isMenuHidden &&
-                    <Nav
-                        imageChangeDuration={imageChangeDuration}
-                        setImageChangeDuration={setImageChangeDuration}
-                        captionIsVisible={captionIsVisible}
-                        setCaptionIsVisible={setCaptionIsVisible}
-                        ambientIsVisible={ambientIsVisible}
-                        setAmbientIsVisible={setAmbientIsVisible}
-                        backgroundColor={backgroundColor}
-                        setBackgroundColor={setBackgroundColor}
-                        isCursorOnNav={isCursorOnNav}
-                        setIsCursorOnNav={setIsCursorOnNav}
-                        history={history}
-                        setHistory={setHistory}
-                        currentItem={currentItem}
-                        setCurrentItem={setCurrentItem}
-                        isPaused={isPaused}
-                        setIsPaused={setIsPaused}
-                    />
-                }
-
-                <Figure
-                    imageChangeDuration={imageChangeDuration}
-                    captionIsVisible={captionIsVisible}
-                    ambientIsVisible={ambientIsVisible}
-                    isPaused={isPaused}
-                    history={history}
-                    setHistory={setHistory}
-                    currentItem={currentItem}
-                    setCurrentItem={setCurrentItem}
-                />
-
-            </MainLayout>
-        </>
+        <SettingsProvider>
+            <HistoryProvider>
+                <ControlProvider>
+                    <Meta />
+                    { !isMenuHidden && <Nav/> }
+                    <Figure/>
+                </ControlProvider>
+            </HistoryProvider>
+        </SettingsProvider>
     )
 }
-
-export default Index;

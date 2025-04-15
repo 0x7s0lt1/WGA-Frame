@@ -1,80 +1,43 @@
-import {FC, useEffect} from "react";
-import Header from "@/modules/Header/Header";
+import Header from "@/componets/Header";
 import Link from "next/link";
 
-import DisplaySettingStorage from "@/common/localstorage/DisplaySettingStorage";
-import IntervalSettingStorage from "@/common/localstorage/IntervalSettingStorage";
+import useControl from "@/hooks/use-control";
+import useSettings from "@/hooks/use-settings";
+import useHistory from "@/hooks/use-history";
+import useCursor from "@/hooks/use-cursor";
 
-import HistoryItemType from "@/interfaces/HistoryItemType";
-
-type Props = {
-    imageChangeDuration: number
-    setImageChangeDuration: (value: number) => void
-    captionIsVisible: boolean
-    setCaptionIsVisible: (value: boolean) => void
-    ambientIsVisible: boolean
-    setAmbientIsVisible: (value: boolean) => void
-    backgroundColor: string
-    setBackgroundColor: (value: string) => void
-    isCursorOnNav: boolean
-    setIsCursorOnNav: (value: boolean) => void
-    history: HistoryItemType[]
-    setHistory: (value: HistoryItemType[]) => void
-    currentItem: HistoryItemType | null
-    setCurrentItem: (value: HistoryItemType | null) => void
-    isPaused: boolean,
-    setIsPaused: (value: boolean) => void
-}
-const Nav: FC<Props> = ({
-    imageChangeDuration,
-    setImageChangeDuration,
-    captionIsVisible,
-    ambientIsVisible,
-    setAmbientIsVisible,
-    backgroundColor,
-    setCaptionIsVisible,
-    setBackgroundColor,
-    isCursorOnNav,
-    setIsCursorOnNav,
-    history,
-    setHistory,
-    currentItem,
-    setCurrentItem,
-    isPaused,
-    setIsPaused
-}) => {
+import { Cinzel, Roboto } from 'next/font/google'
 
 
-    const onBackGroundColorChange = async (event: any): Promise<void> => {
+const cinzel = Cinzel({ weight: '400', subsets: ['latin'] })
+const roboto = Roboto({ weight: '100', subsets: ['latin'] })
 
-        const color = event.target.value;
+export default function Nav( ){
 
-        setBackgroundColor(color);
-        await DisplaySettingStorage.setSetting(DisplaySettingStorage.BACKGROUND_COLOR_KEY, color);
+
+    const { setIsCursorOnNav } = useCursor();
+    const { history, currentItem, setCurrentItem } = useHistory();
+    const { imageChangeDuration, setImageChangeDuration, isPaused, setIsPaused } = useControl();
+    const { captionIsVisible, setCaptionIsVisible, ambientIsVisible, setAmbientIsVisible, isFullscreen, setIsFullscreen, backgroundColor, setBackgroundColor } = useSettings();
+
+    const onBackGroundColorChange = async (event: any)=> {
+        setBackgroundColor(event.target.value);
     };
 
-    const onCaptionVisibleChange = async (event: any): Promise<void> => {
-
-        const checked = !!event.target.checked;
-
-        setCaptionIsVisible(checked);
-        await DisplaySettingStorage.setSetting(DisplaySettingStorage.CAPTION_IS_VISIBLE_KEY, checked);
+    const onCaptionVisibleChange = async (event: any)=> {
+        setCaptionIsVisible(event.target.checked);
     };
 
-    const onAmbientVisibleChange = async (event: any): Promise<void> => {
+    const onAmbientVisibleChange = async (event: any)=> {
+        setAmbientIsVisible(event.target.checked);
+    };
 
-        const checked = !!event.target.checked;
-
-        setAmbientIsVisible(checked);
-        await DisplaySettingStorage.setSetting(DisplaySettingStorage.AMBIENT_IS_VISIBLE_KEY, checked);
+    const onFullscreenChange = async (event: any)=> {
+        setIsFullscreen(event.target.checked);
     };
 
     const onImageChangeDurationChange = async (event: any): Promise<void> => {
-
-        const duration = event.target.value;
-
-        setImageChangeDuration(parseInt(duration));
-        await IntervalSettingStorage.setInterval(duration);
+        setImageChangeDuration(parseInt(event.target.value));
     }
 
     // Controller
@@ -91,33 +54,31 @@ const Nav: FC<Props> = ({
     };
 
 
-    useEffect(() => {
-        document.body.style.backgroundColor = backgroundColor;
-    }, [backgroundColor]);
-
     return(
         <>
             <Header
-                isCursorOnNav={isCursorOnNav}
                 setIsCursorOnNav={setIsCursorOnNav}
             />
 
             <div
-                className="nav"
+                className={`nav flex flex-wrap color-white bg-wga-blue ${roboto.className}`}
                 onMouseEnter={() => setIsCursorOnNav(true)}
                 onMouseLeave={() => setIsCursorOnNav(false)}
             >
 
                 <fieldset className={'border-green mt-5'}>
-                    <legend>DISPLAY</legend>
+                    <legend className={`${cinzel.className}`} >DISPLAY</legend>
                     <table>
                         <tbody>
                         <tr>
                             <td>
-                                Caption
+                                <label htmlFor={"control-caption"}>
+                                    Caption
+                                </label>
                             </td>
                             <td className="text-center">
                                 <input
+                                    id={"control-caption"}
                                     type="checkbox"
                                     checked={captionIsVisible}
                                     onChange={onCaptionVisibleChange}
@@ -126,10 +87,13 @@ const Nav: FC<Props> = ({
                         </tr>
                         <tr>
                             <td>
-                                Ambient light
+                                <label htmlFor={"control-ambient"}>
+                                    Ambient light
+                                </label>
                             </td>
                             <td className="text-center">
                                 <input
+                                    id={"control-ambient"}
                                     type="checkbox"
                                     checked={ambientIsVisible}
                                     onChange={onAmbientVisibleChange}
@@ -138,10 +102,28 @@ const Nav: FC<Props> = ({
                         </tr>
                         <tr>
                             <td>
-                                Background
+                                <label htmlFor={"control-fullscreen"}>
+                                    Fullscreen
+                                </label>
                             </td>
                             <td className="text-center">
                                 <input
+                                    id={"control-fullscreen"}
+                                    type="checkbox"
+                                    checked={isFullscreen}
+                                    onChange={onFullscreenChange}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label htmlFor={"control-bg-color"}>
+                                    Background
+                                </label>
+                            </td>
+                            <td className="text-center">
+                                <input
+                                    id={"control-bg-color"}
                                     type="color"
                                     value={backgroundColor}
                                     onInput={onBackGroundColorChange}
@@ -153,7 +135,7 @@ const Nav: FC<Props> = ({
                 </fieldset>
 
                 <fieldset className={"mt-2 border-green"}>
-                    <legend>INTERVAL</legend>
+                    <legend className={`${cinzel.className}`}>INTERVAL</legend>
                     <table className={"w-100"}>
                         <tbody>
                         <tr>
@@ -181,10 +163,10 @@ const Nav: FC<Props> = ({
                 </fieldset>
 
                 <fieldset className={"mt-2 border-green"}>
-                    <legend>Control</legend>
+                    <legend className={`${cinzel.className}`} >CONTROL</legend>
                     <table className={"w-100"}>
                         <tbody>
-                        <tr >
+                        <tr>
                             <td className="text-center">
                               <button 
                               className="btn-green"
@@ -282,12 +264,12 @@ const Nav: FC<Props> = ({
                 {/*    </details>*/}
                 {/*</fieldset>*/}
 
-                <section className={"text-center mt-2 d-flex flex-wrap nav-footer"}>
+                <section className={"text-center mt-2 flex flex-wrap nav-footer"}>
                     <img className="m-auto mt-2" src="/img/kockak.gif" alt="kocka" />
                     <Link
                         href={"https://www.wga.hu/"}
                         target="_blank"
-                        className={"font-arial text-white fw-light fb-100 mt-1"}
+                        className={"font-arial color-white fw-light fb-100 mt-1"}
                     >
                         Web Gallery of Art
                     </Link>
@@ -297,5 +279,3 @@ const Nav: FC<Props> = ({
         </>
     )
 }
-
-export default Nav;

@@ -10,11 +10,8 @@ export default function HistoryProvider({ children }: any){
 
     const pushToHistory = (item: HistoryItemType) => {
 
-        if(history.length === 10){
-            history.shift();
-        }
-
-        setHistory([...history, item]);
+        history.push(item);
+        setHistory(history);
     };
 
     return (

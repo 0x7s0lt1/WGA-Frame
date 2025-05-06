@@ -184,5 +184,6 @@ input[type="checkbox"] {
     background-color: var(--wga-blue);
 }
 .border-green{
-    border: 2px solid var(--wga-green);
+    border: none;
+    border-top: 2px solid var(--wga-green);
 }

@@ -29,11 +29,12 @@ export default function Figure(){
 
             setImageSrc(LOADING_IMG);
 
-            const { AUTHOR, TITLE, DATE, URL } = catalog.painting[ Math.floor(Math.random() * catalog.painting.length ) ];;
+            const { AUTHOR, TITLE, DATE, URL } = catalog.painting[ Math.floor(Math.random() * catalog.painting.length ) ];
 
             const item: HistoryItemType = {
                 name: `${AUTHOR} - ${TITLE} - ${DATE}`,
-                url: await getImageFromURL(URL),
+                url: URL,
+                imageUrl: await getImageFromURL(URL)
             };
 
             if(figCaptionRef.current !== null){
@@ -83,7 +84,7 @@ export default function Figure(){
     useEffect(() => {
 
         if(isCatalogLoaded){
-            setImageSrc(currentItem?.url ?? LOADING_IMG);
+            setImageSrc(currentItem?.imageUrl ?? LOADING_IMG);
         }
 
     }, [currentItem]);

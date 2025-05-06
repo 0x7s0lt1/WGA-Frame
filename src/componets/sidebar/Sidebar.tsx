@@ -2,7 +2,6 @@ import Header from "@/componets/Header";
 import useCursor from "@/hooks/use-cursor";
 import DisplaySettings from "@/componets/sidebar/partial/DisplaySettings";
 import IntervalSettings from "@/componets/sidebar/partial/IntervalSettings";
-import HistorySettings from "@/componets/sidebar/partial/HistorySettings";
 import SidebarFooter from "@/componets/sidebar/partial/SidebarFooter";
 import { Roboto } from 'next/font/google'
 
@@ -25,7 +24,6 @@ export default function Sidebar( ){
 
                 <DisplaySettings />
                 <IntervalSettings />
-                <HistorySettings />
 
                 {/*<fieldset>*/}
                 {/*    <legend>CONTENT FILTER</legend>*/}

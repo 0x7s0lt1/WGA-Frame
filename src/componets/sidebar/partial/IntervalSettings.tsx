@@ -1,5 +1,6 @@
 import useControl from "@/hooks/use-control";
 import { Cinzel } from 'next/font/google'
+import HistorySettings from "@/componets/sidebar/partial/HistorySettings";
 
 const cinzel = Cinzel({ weight: '400', subsets: ['latin'] })
 
@@ -13,8 +14,8 @@ export default function IntervalSettings(){
 
     return(
         <fieldset className={"mt-2 border-green"}>
-            <legend className={`${cinzel.className}`}>INTERVAL</legend>
-            <table className={"w-100"}>
+            <legend className={`${cinzel.className}`}>Refresh</legend>
+            <table className={"w-100 mb-2"}>
                 <tbody>
                 <tr>
                     <td className="text-center">
@@ -38,6 +39,7 @@ export default function IntervalSettings(){
                 </tr>
                 </tbody>
             </table>
+            <HistorySettings />
         </fieldset>
     )
 }

@@ -1,14 +1,14 @@
 
 export const BASE_URL = "https://www.wga.hu/";
-export const PROXY_URL = (process.env.NEXT_PUBLIC_PROXY_URL + "/api/proxy/?url=");
 export const LOADING_IMG = "/img/loading.svg";
 export const ERROR_IMG = "/img/error.webp";
 export const CATALOG_URL = '/json/catalog.min.json';
+
 export const getImageFromURL = async (url: string): Promise<string> => {
 
     try{
 
-        const response= await fetch(PROXY_URL + url);
+        const response= await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/api/proxy/?url=${url}`);
         const content = await response.text();
 
         const href = new DOMParser()
@@ -25,5 +25,6 @@ export const getImageFromURL = async (url: string): Promise<string> => {
     }
 
 };
+
 
 

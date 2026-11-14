@@ -1,7 +1,9 @@
 "use client";
 import { useContext } from "react";
-import {SettingsContext} from "@/contexts/settings-provider";
-export default function useSettings(){
+import { SettingsContext } from "@/contexts/settings-provider";
 
-    return useContext(SettingsContext)
+export default function useSettings() {
+    const context = useContext(SettingsContext);
+    if (!context) throw new Error("useSettings must be used inside <SettingsProvider>");
+    return context;
 }

@@ -1,54 +1,38 @@
 import useControl from "@/hooks/use-control";
 import useHistory from "@/hooks/use-history";
 
-export default function HistorySettings(){
+export default function HistorySettings() {
 
-    const { history, currentItem, setCurrentItem } = useHistory();
-    const { isPaused, setIsPaused } = useControl();
+    const { canGoBack, canGoForward } = useHistory();
+    const { isPaused, togglePaused, next, back, isLoading } = useControl();
 
-    const handlePrev = () => {
-        setCurrentItem( history[history.indexOf(currentItem!) - 1]);
-    };
-
-    const handlePlayPause = () => {
-        setIsPaused(!isPaused);
-    };
-
-    const handleNext = () => {
-        setCurrentItem( history[history.indexOf(currentItem!) + 1]);
-    };
-
-    return(
-        <table className={"w-100"}>
+    return (
+        <table className="w-100">
             <tbody>
             <tr>
                 <td className="text-center">
-                    <button
-                        className="btn-green"
-                        onClick={handlePrev}
-                        disabled={history.indexOf(currentItem!) === 0}
-                    >
+                    <button className="btn-green" onClick={back} disabled={!canGoBack} title="Previous artwork (←)">
                         back
                     </button>
                 </td>
                 <td className="text-center">
-                    <button
-                        className="btn-green"
-                        onClick={handlePlayPause}
-                    >
-                        { isPaused ? "play" : "pause" }
+                    <button className="btn-green" onClick={togglePaused} title="Play / pause (Space)">
+                        {isPaused ? "play" : "pause"}
                     </button>
                 </td>
                 <td className="text-center">
+                    {/* At the end of the history "next" picks a new random artwork. */}
                     <button
                         className="btn-green"
-                        onClick={handleNext}
-                        disabled={history.indexOf(currentItem!) === history.length - 1}
-                    > next
+                        onClick={next}
+                        disabled={!canGoForward && isLoading}
+                        title={canGoForward ? "Next artwork (→)" : "New random artwork (→)"}
+                    >
+                        next
                     </button>
                 </td>
             </tr>
             </tbody>
         </table>
-    )
+    );
 }

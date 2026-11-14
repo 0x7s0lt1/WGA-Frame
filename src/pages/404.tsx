@@ -1,31 +1,32 @@
-import {ERROR_IMG} from "@/lib/utils";
+import { ERROR_IMG } from "@/lib/utils";
 import Link from "next/link";
-import {useEffect} from "react";
-import { Roboto } from 'next/font/google'
-import {useRouter} from "next/router";
-
-const roboto = Roboto({ weight: '100', subsets: ['latin'] })
+import Head from "next/head";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { roboto } from "@/lib/fonts";
 
 export default function Custom404() {
 
     const router = useRouter();
 
-    useEffect(()=>{
-        setTimeout(()=>{
-           router.push("/");
-        }, 5000);
-    },[]);
+    useEffect(() => {
+        const timer = setTimeout(() => router.replace("/"), 5000);
+        return () => clearTimeout(timer);
+    }, [router]);
 
     return (
-       <div className={"flex item-center w-screen h-screen"}>
-           <div className={"flex flex-wrap item-center"}>
-               <Link href="/">
-                   <img src={ERROR_IMG} alt={"404"} height={"450"} />
-               </Link>
-               <h1 className={` ${roboto.className} color-white text-center bg-black fb-100 mt-2`}>
-                   404 Not Found
-               </h1>
-           </div>
-       </div>
-    )
+        <div className="flex item-center w-screen h-screen">
+            <Head>
+                <title>404 Not Found | WGA - Frame</title>
+            </Head>
+            <div className="flex flex-wrap item-center">
+                <Link href="/">
+                    <img src={ERROR_IMG} alt="404" height={450} />
+                </Link>
+                <h1 className={`${roboto.className} color-white text-center bg-black fb-100 mt-2`}>
+                    404 Not Found
+                </h1>
+            </div>
+        </div>
+    );
 }

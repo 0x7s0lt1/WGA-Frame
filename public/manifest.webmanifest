@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "WGA - Frame",
+  "short_name": "WGA Frame",
+  "description": "The Web Gallery of Art in a Frame: random artworks from wga.hu, full screen.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "categories": ["entertainment", "education", "lifestyle"],
+  "icons": [
+    { "src": "/img/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/img/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/img/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,45 +1,46 @@
 import useControl from "@/hooks/use-control";
-import { Cinzel } from 'next/font/google'
+import useNow from "@/hooks/use-now";
 import HistorySettings from "@/componets/sidebar/partial/HistorySettings";
+import { INTERVAL_OPTIONS } from "@/contexts/control-provider";
+import { formatDuration, LOADING_WHITE_IMG } from "@/lib/utils";
+import { cinzel } from "@/lib/fonts";
 
-const cinzel = Cinzel({ weight: '400', subsets: ['latin'] })
+export default function IntervalSettings() {
 
-export default function IntervalSettings(){
+    const { imageChangeDuration, setImageChangeDuration, isLoading, hasError, isPaused, nextChangeAt } = useControl();
+    const now = useNow(30_000);
 
-    const { imageChangeDuration, setImageChangeDuration } = useControl();
+    const countdown = isPaused
+        ? "Paused"
+        : nextChangeAt && now ? `Next artwork in ${formatDuration(nextChangeAt - now)}` : null;
 
-    const onImageChangeDurationChange = async (event: any): Promise<void> => {
-        setImageChangeDuration(parseInt(event.target.value));
-    }
-
-    return(
-        <fieldset className={"mt-2 border-green"}>
-            <legend className={`${cinzel.className}`}>Refresh</legend>
-            <table className={"w-100 mb-2"}>
+    return (
+        <fieldset className="mt-2 border-green">
+            <legend className={cinzel.className}>
+                Refresh
+                {isLoading && <img className="legend-status" src={LOADING_WHITE_IMG} alt="Loading" width={14} height={14} />}
+                {!isLoading && hasError && <span className="legend-status color-orange" title="Last load failed, retrying">!</span>}
+            </legend>
+            <table className="w-100 mb-1">
                 <tbody>
                 <tr>
                     <td className="text-center">
                         <select
-                            className={"w-100 bg-light-green"}
-                            value={imageChangeDuration.toString()}
-                            onChange={onImageChangeDurationChange}
+                            className="w-100 bg-light-green"
+                            aria-label="Change artwork every"
+                            value={imageChangeDuration}
+                            onChange={(event) => setImageChangeDuration(Number(event.target.value))}
                         >
-                            <option value="60000">1m</option>
-                            <option value="300000">5m</option>
-                            <option value="600000">10m</option>
-                            <option value="900000">15m</option>
-                            <option value="1800000">30m</option>
-                            <option value="2700000">45m</option>
-                            <option value="3600000">1h</option>
-                            <option value="7200000">2h</option>
-                            <option value="43200000">12h</option>
-                            <option value="86400000">24h</option>
+                            {INTERVAL_OPTIONS.map(({ value, label }) => (
+                                <option key={value} value={value}>{label}</option>
+                            ))}
                         </select>
                     </td>
                 </tr>
                 </tbody>
             </table>
             <HistorySettings />
+            {countdown && <p className="category-note">{countdown}</p>}
         </fieldset>
-    )
+    );
 }

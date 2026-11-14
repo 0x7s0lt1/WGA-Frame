@@ -1,0 +1,75 @@
+{
+  "version": "56d41b6d87",
+  "updated": "2024-08-25",
+  "source": "https://www.wga.hu/database/download/data_txt.zip",
+  "shardSize": 1000,
+  "total": 52867,
+  "palettes": 52847,
+  "categories": [
+    {
+      "id": "painting",
+      "label": "Painting",
+      "count": 32438
+    },
+    {
+      "id": "sculpture",
+      "label": "Sculpture",
+      "count": 7696
+    },
+    {
+      "id": "architecture",
+      "label": "Architecture",
+      "count": 4994
+    },
+    {
+      "id": "graphics",
+      "label": "Graphics",
+      "count": 4289
+    },
+    {
+      "id": "illumination",
+      "label": "Illumination",
+      "count": 1636
+    },
+    {
+      "id": "ceramics",
+      "label": "Ceramics",
+      "count": 181
+    },
+    {
+      "id": "furniture",
+      "label": "Furniture",
+      "count": 271
+    },
+    {
+      "id": "glassware",
+      "label": "Glassware",
+      "count": 77
+    },
+    {
+      "id": "metalwork",
+      "label": "Metalwork",
+      "count": 494
+    },
+    {
+      "id": "mosaic",
+      "label": "Mosaic",
+      "count": 420
+    },
+    {
+      "id": "stained-glass",
+      "label": "Stained glass",
+      "count": 162
+    },
+    {
+      "id": "tapestry",
+      "label": "Tapestry",
+      "count": 198
+    },
+    {
+      "id": "others",
+      "label": "Others",
+      "count": 11
+    }
+  ]
+}

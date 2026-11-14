@@ -1,9 +1,30 @@
 :root{
+    /* Web Gallery of Art palette */
     --wga-blue: #003366;
     --wga-light-blue: #f0f6ff;
     --wga-green: #489393;
     --wga-light-green: #99cccc;
+    --wga-gold: #cc9933;
     --wga-orange: #ff6600;
+
+    --header-height: 50px;
+    --menu-transition: 0.5s ease;
+
+    /* Notches and home indicators (needs viewport-fit=cover, see Meta). */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+
+    /* Largest box an artwork may take (Figure reads these). */
+    --frame-w: 90vw;
+    --frame-h: 90vh;
+    /* Height kept free under the artwork for the palette strip (see .fig.has-palette). */
+    --frame-reserve: 0px;
+}
+@supports (height: 1dvh){
+    /* Mobile browsers: the visible height, without the address bar. */
+    :root{ --frame-h: 90dvh; }
 }
 
 * {
@@ -13,107 +34,655 @@
 
 html,body{
     background-color: black;
-    max-width: 100vw;
-    max-height: 100vh;
-    min-height: 100vh;
-    min-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
+    overscroll-behavior: none; /* no pull-to-refresh while swiping */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
-.header{
-    background-image: url(/img/header.gif);
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: left center;
+/* Idle: hide the cursor over the whole page (see CursorProvider). */
+html.is-idle,
+html.is-idle *{
+    cursor: none !important;
+}
+
+:focus-visible{
+    outline: 2px solid var(--wga-orange);
+    outline-offset: 2px;
+}
+
+button, input, select, label, a{
+    touch-action: manipulation;
+}
+
+/* ---------- Stage (full-screen layer holding the artwork) ---------- */
+
+.stage{
     position: fixed;
-    left: 0px;
-    top: 0px;
+    inset: 0;
+    /* Horizontal swipes come to us; vertical pan and pinch-zoom stay with the browser. */
+    touch-action: pan-y pinch-zoom;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Sidebar ---------- */
+
+.header{
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    position: fixed;
+    left: 0;
+    top: 0;
     width: 100%;
-    height: 50px;
+    height: calc(var(--header-height) + var(--safe-top));
+    padding: var(--safe-top) var(--safe-right) 0 var(--safe-left);
     z-index: 100;
-    transition: all 0.5s;
+}
+
+/* The WGA banner (780×45). On narrow screens it's cropped to the logo part. */
+.header-link{
+    display: block;
+    flex: 0 1 auto;
+    width: calc(var(--header-height) * 780 / 45);
+    max-width: 100%;
+    background: url(/img/header.gif) no-repeat left center / auto 100%;
+}
+
+.header-close{
+    display: none;
+    flex: none;
+    width: 48px;
+    border: none;
+    background: none;
+    color: white;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
 }
 
 .nav{
     position: fixed;
     flex-direction: column;
-    padding: 10px;
-    left: 0px;
-    top: 50px;
-    max-height: calc(100% - 50px);
-    height:calc(100% - 50px);
+    padding: 10px 12px calc(10px + var(--safe-bottom)) calc(12px + var(--safe-left));
+    left: 0;
+    top: calc(var(--header-height) + var(--safe-top));
+    height: calc(100% - var(--header-height) - var(--safe-top));
     width: 12.5%;
-    max-width: 12.5%;
     min-width: fit-content;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--wga-green) transparent;
     z-index: 100;
-    transition: all 0.5s;
+}
+
+.header,
+.nav{
+    transition: opacity var(--menu-transition), transform var(--menu-transition), visibility var(--menu-transition);
+}
+
+.sidebar.is-hidden .header{
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+}
+.sidebar.is-hidden .nav{
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+}
+
+.nav fieldset{
+    padding: 4px 2px 8px;
+}
+
+.nav legend{
+    padding: 0 6px;
+    letter-spacing: 0.05em;
+}
+
+.nav td{
+    padding: 2px 0;
+    vertical-align: middle;
+}
+
+.nav label{
+    cursor: pointer;
+}
+
+.legend-status{
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: -2px;
+    font-weight: bold;
 }
 
 input[type="checkbox"] {
     color: white;
     accent-color: var(--wga-green);
+    cursor: pointer;
+}
+input[type="checkbox"]:disabled{
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
-.fig{
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    max-width: 100%;
-    max-height: 95vh;
-    transform: translate(-50%, -50%);
-}
-#frame{
-    max-width: 90vw;
-    max-height: 90vh;
-    min-height: 90vh;
-    object-fit: contain;
-    position: relative;
-    /*width: 90vw;*/
-    z-index: 2;
-}
-#frame-bg{
-    max-width: 90vw;
-    max-height: 90vh;
-    min-height: 90vh;
-    object-fit: contain;
-    /*//bottom: -30px;!* amount shadow should extend below main image *!*/
-    filter: blur(20px);
-    height: 100%;
-    left: 0;
-    position: absolute;
-    transform: scale(1.01);
-    /*width: 100%;*/
-    /*width: 90vw;*/
-    z-index: 1;
+input[type="color"]{
+    width: 32px;
+    height: 20px;
+    padding: 0;
+    border: 1px solid var(--wga-light-green);
+    background: none;
+    cursor: pointer;
 }
 
-.figCaption{
-    padding: 0px 5px;
-    max-width: fit-content;
+select{
+    padding: 2px 4px;
+    border: 1px solid var(--wga-blue);
+    font: inherit;
+    cursor: pointer;
+}
+
+.category-table td{
+    font-size: 14px;
+    padding: 1px 0;
+}
+.category-table tr:not(.is-selected) label{
+    opacity: 0.7;
+}
+.category-count{
+    text-align: right;
+    padding-right: 8px !important;
+    font-size: 12px !important;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    color: var(--wga-light-green);
+    opacity: 0.8;
+}
+
+.category-actions{
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+.category-actions .btn-green{
+    flex: 1;
+}
+
+.category-note{
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 300;
+    text-align: center;
+    color: var(--wga-light-green);
+}
+
+.color-grid{
+    display: grid;
+    grid-template-columns: repeat(7, 22px);
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 0;
+}
+.color-swatch{
     position: relative;
-    /*margin: 0px auto;*/
-    z-index: 3;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: var(--swatch);
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.color-swatch[aria-pressed="true"]{
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+.color-swatch[aria-pressed="true"]::after{
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    color: white;
+    text-shadow: 0 0 2px black, 0 0 2px black;
+}
+/* Would leave nothing to show: still recognisable, but struck through. */
+.color-swatch:disabled{
+    opacity: 0.45;
+    cursor: not-allowed;
+    background:
+        linear-gradient(to top right, transparent calc(50% - 1px), rgba(255, 255, 255, 0.85) calc(50% - 1px), rgba(255, 255, 255, 0.85) calc(50% + 1px), transparent calc(50% + 1px)),
+        var(--swatch);
+}
+
+.ambient-level{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 14px;
+    font-size: 14px;
+    opacity: 0.9;
+}
+.ambient-level input[type="range"]{
+    flex: 1;
+    min-width: 0;
+    accent-color: var(--wga-green);
+    cursor: pointer;
 }
 
 .nav-footer{
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
+    /* A column, not a wrapping row: a wrapping row's natural width is the sum of its items and widens the menu. */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-top: auto; /* sticks to the bottom, but scrolls with the menu instead of covering it */
+    padding: 20px 0 10px;
 }
 
+.touch-hint{
+    display: none;
+    max-width: 220px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--wga-light-green);
+}
+
+/* Same width for the control column in every settings table, so the checkboxes line up. */
+.settings-table td:last-child{
+    width: 36px;
+    text-align: center;
+}
+
+.catalog-info{
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--wga-light-green);
+    opacity: 0.8;
+}
 
 .btn-green{
     background-color: var(--wga-light-green);
-    padding: 2.5px;
-    border-radius: 1px solid var(--wga-blue);
+    color: var(--wga-blue);
+    padding: 2.5px 8px;
+    border: 1px solid var(--wga-blue);
+    font: inherit;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
 }
-.btn-green:hover{
+.btn-green:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.btn-green:active:not(:disabled){
     background-color: var(--wga-orange);
     color: white;
-    cursor: pointer;
 }
+
+/* Hover colours only where there is real hover; on touch they'd stick after a tap. */
+@media (hover: hover){
+    .btn-green:hover:not(:disabled){
+        background-color: var(--wga-orange);
+        color: white;
+        cursor: pointer;
+    }
+    .category-table tr:hover label{
+        opacity: 1;
+        color: var(--wga-light-green);
+    }
+    .figCaption a:hover{
+        text-decoration: underline;
+        text-decoration-color: var(--wga-gold);
+    }
+    .palette-swatch:hover .palette-chip{
+        transform: scale(1.12);
+    }
+    .palette-swatch:hover .palette-hex,
+    .palette-copy-all:hover{
+        opacity: 1;
+        color: var(--wga-light-green);
+    }
+    .color-swatch:hover:not(:disabled){
+        transform: scale(1.12);
+    }
+}
+
+/* ---------- Frame ---------- */
+
+.fig{
+    /* A table shrinks to the image, and the table-caption below wraps inside that width,
+       so a long caption can't widen the figure and push the artwork off-centre. */
+    display: table;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+#frame{
+    display: block;
+    max-width: var(--frame-w);
+    max-height: calc(var(--frame-h) - var(--frame-reserve));
+    min-height: calc(var(--frame-h) - var(--frame-reserve));
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+}
+#frame-bg{
+    max-width: var(--frame-w);
+    max-height: calc(var(--frame-h) - var(--frame-reserve));
+    min-height: calc(var(--frame-h) - var(--frame-reserve));
+    object-fit: contain;
+    filter: blur(var(--ambient-blur)) saturate(var(--ambient-saturate)) brightness(var(--ambient-brightness));
+    opacity: var(--ambient-opacity);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    transform: scale(var(--ambient-scale));
+    z-index: 1;
+    pointer-events: none;
+    transition: filter 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+}
+
+/* Ambient light levels (slider in the menu). Level 2 is the original glow. */
+.fig{
+    --ambient-blur: 20px;
+    --ambient-scale: 1.01;
+    --ambient-opacity: 1;
+    --ambient-saturate: 1;
+    --ambient-brightness: 1;
+}
+.fig[data-ambient-level="0"]{ --ambient-blur: 10px; --ambient-scale: 1; --ambient-opacity: 0.45; }
+.fig[data-ambient-level="1"]{ --ambient-blur: 15px; --ambient-scale: 1.005; --ambient-opacity: 0.75; }
+.fig[data-ambient-level="3"]{ --ambient-blur: 34px; --ambient-scale: 1.06; --ambient-saturate: 1.25; }
+.fig[data-ambient-level="4"]{ --ambient-blur: 52px; --ambient-scale: 1.13; --ambient-saturate: 1.5; --ambient-brightness: 1.1; }
+/* Size known (see Figure): the box matches the artwork, width/aspect-ratio come inline. */
+#frame.is-sized,
+#frame-bg.is-sized{
+    min-height: 0;
+    max-height: none;
+    height: auto;
+}
+#frame,
+#frame-bg{
+    animation: frame-in 1s ease both;
+}
+
+@keyframes frame-in{
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.figCaption{
+    display: table-caption;
+    caption-side: bottom;
+    padding: 2px 6px;
+    max-width: fit-content;
+    position: relative;
+    z-index: 3;
+    line-height: 1.35;
+}
+.figCaption a{
+    color: inherit;
+    text-decoration: none;
+}
+.figCaption cite{
+    font-style: italic;
+}
+.caption-details{
+    display: block;
+    font-size: 12px;
+    font-weight: 300;
+    opacity: 0.7;
+}
+
+.fig.has-palette{
+    --frame-reserve: 64px;
+}
+
+/* Palette under the caption: a row of squares, like the three in the WGA logo.
+   Always one row (the frame reserves its height); it adapts to the artwork's width instead. */
+.figCaption:has(.palette){
+    max-width: none; /* full artwork width, so the palette knows how much room it has */
+}
+.palette{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 4px 0 2px;
+    container-type: inline-size;
+}
+.caption-text + .palette{
+    margin-top: 2px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 5px;
+}
+.palette-swatch{
+    display: flex;
+    flex: 0 1 52px;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: copy;
+}
+.palette-chip{
+    display: block;
+    width: 100%;
+    max-width: 28px;
+    aspect-ratio: 1;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    transition: transform 0.15s ease;
+}
+.palette-swatch.is-copied .palette-chip{
+    outline: 2px solid var(--wga-light-green);
+    outline-offset: 2px;
+}
+.palette-hex{
+    white-space: nowrap;
+    font: 10px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.02em;
+    opacity: 0.75;
+    text-align: center;
+}
+.palette-swatch.is-copied .palette-hex,
+.palette-copy-all.is-copied{
+    color: var(--wga-light-green);
+    opacity: 1;
+}
+.palette-copy-all{
+    flex: none;
+    align-self: center;
+    margin-left: 4px;
+    padding: 3px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 300;
+    white-space: nowrap;
+    cursor: copy;
+}
+/* Narrow artworks: colour squares only, then a shorter button. */
+@container (max-width: 400px){
+    .palette-hex{
+        display: none;
+    }
+    .palette-swatch{
+        flex-basis: 34px;
+    }
+}
+@container (max-width: 240px){
+    .palette-copy-word{
+        display: none;
+    }
+}
+
+.visually-hidden{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ---------- Touch screens (phones, tablets) ---------- */
+
+@media (pointer: coarse){
+    .header-close,
+    .touch-hint{
+        display: block;
+    }
+
+    /* Finger-sized targets (~40px rows). */
+    .nav td{
+        padding: 6px 0;
+    }
+    .category-table td{
+        padding: 5px 0;
+        font-size: 15px;
+    }
+    .settings-table td:last-child{
+        width: 44px;
+    }
+    input[type="checkbox"]{
+        width: 22px;
+        height: 22px;
+    }
+    input[type="color"]{
+        width: 40px;
+        height: 28px;
+    }
+    select{
+        padding: 8px 6px;
+        font-size: 16px; /* below 16px iOS zooms the page on focus */
+    }
+    .btn-green{
+        padding: 8px 14px;
+        font-size: 15px;
+    }
+    .color-grid{
+        grid-template-columns: repeat(5, 34px);
+        gap: 10px;
+    }
+    .color-swatch{
+        width: 34px;
+        height: 34px;
+    }
+    .palette-chip{
+        max-width: 34px;
+    }
+    .ambient-level input[type="range"]{
+        height: 32px;
+    }
+    .fig.has-palette{
+        --frame-reserve: 72px;
+    }
+}
+
+/* ---------- Narrow screens: up to the header banner's width ---------- */
+
+@media (max-width: 900px){
+    .header-link{
+        /* Crop the banner right after "WEB GALLERY OF ART". */
+        width: calc(var(--header-height) * 270 / 45);
+    }
+}
+
+/* ---------- Phones (portrait) ---------- */
+
+@media (max-width: 600px){
+    :root{
+        --header-height: 46px;
+        --frame-w: 96vw;
+        --frame-h: 80vh;
+    }
+    @supports (height: 1dvh){
+        :root{ --frame-h: 80dvh; }
+    }
+
+    /* The menu becomes a drawer that slides over the artwork. */
+    .nav{
+        width: min(320px, 86vw);
+        min-width: 0;
+        box-shadow: 6px 0 24px rgba(0, 0, 0, 0.5);
+    }
+    .sidebar.is-hidden .nav{
+        transform: translateX(-100%);
+    }
+    .nav > fieldset:first-child{
+        margin-top: 16px;
+    }
+
+    .figCaption{
+        font-size: 14px;
+    }
+    .caption-details{
+        font-size: 11px;
+    }
+}
+
+/* ---------- Phones (landscape): very little height ---------- */
+
+@media (max-height: 500px) and (orientation: landscape){
+    :root{
+        --header-height: 40px;
+        --frame-w: 88vw;
+        --frame-h: 82vh;
+    }
+    @supports (height: 1dvh){
+        :root{ --frame-h: 82dvh; }
+    }
+
+    .nav{
+        width: min(320px, 50vw);
+        min-width: 0;
+        box-shadow: 6px 0 24px rgba(0, 0, 0, 0.5);
+    }
+    .sidebar.is-hidden .nav{
+        transform: translateX(-100%);
+    }
+    .nav > fieldset:first-child{
+        margin-top: 10px;
+    }
+
+    .figCaption{
+        font-size: 13px;
+    }
+    .caption-details{
+        display: none; /* one line of caption is all the height allows */
+    }
+}
+
+@media (prefers-reduced-motion: reduce){
+    #frame,
+    #frame-bg{
+        animation: none;
+        transition: none;
+    }
+    .header,
+    .nav{
+        transition: none;
+    }
+}
+
+/* ---------- Utilities ---------- */
 
 .w-100{
     width: 100%;
@@ -123,6 +692,7 @@ input[type="checkbox"] {
 }
 .h-screen{
     height: 100vh;
+    height: 100dvh;
 }
 
 .d-none{
@@ -160,9 +730,15 @@ input[type="checkbox"] {
 .mt-5{
     margin-top: 50px;
 }
+.mb-1{
+    margin-bottom: 10px;
+}
 
 .color-white{
     color: white;
+}
+.color-orange{
+    color: var(--wga-orange);
 }
 .text-center{
     text-align: center;

@@ -39,3 +39,6 @@ next-env.d.ts
 
 # Sentry Config File
 .sentryclirc
+
+# palette builder progress (scripts/build-palettes.mjs)
+/.cache/

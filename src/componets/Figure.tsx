@@ -1,103 +1,86 @@
-import {useEffect, useRef, useState} from "react";
-import HistoryItemType from "@/types/history/HistoryItemType";
-import useControl from "@/hooks/use-control";
+import { useState } from "react";
 import useHistory from "@/hooks/use-history";
 import useSettings from "@/hooks/use-settings";
 import useCatalog from "@/hooks/use-catalog";
-import {getImageFromURL, LOADING_IMG} from "@/lib/utils";
+import useControl from "@/hooks/use-control";
+import Palette from "@/componets/Palette";
+import { ERROR_IMG, LOADING_IMG } from "@/lib/utils";
+import { roboto } from "@/lib/fonts";
 
-import { Roboto } from 'next/font/google'
+export default function Figure() {
 
-const roboto = Roboto({ weight: '100', subsets: ['latin'] })
+    const { captionIsVisible, ambientIsVisible, ambientLevel, paletteIsVisible } = useSettings();
+    const { currentItem } = useHistory();
+    const { error: catalogError, poolSize, isReady } = useCatalog();
+    const { hasError } = useControl();
 
-export default function Figure(){
+    // Images are preloaded before they're shown, so this only catches rare late failures.
+    const [brokenImage, setBrokenImage] = useState<string | null>(null);
 
-    let imageChangeInterval = useRef<any>();
+    const imageSrc = !currentItem
+        ? LOADING_IMG
+        : brokenImage === currentItem.imageUrl ? ERROR_IMG : currentItem.imageUrl;
 
-    const { catalog, isCatalogLoaded } = useCatalog();
-    const { captionIsVisible, ambientIsVisible } = useSettings();
-    const { currentItem, setCurrentItem, pushToHistory } = useHistory();
-    const { isPaused, imageChangeDuration } = useControl();
+    const status = catalogError
+        ?? (!currentItem && isReady && poolSize === 0 ? "No artwork matches the selected colours." : null)
+        ?? (!currentItem && hasError ? "Could not reach wga.hu. Retrying…" : null);
 
-    const figCaptionRef = useRef<any>();
-    const [imageSrc,setImageSrc] = useState<string>(LOADING_IMG);
+    // Fit the box to the artwork (instead of a fixed 90vh letterbox) so the caption sits right under it.
+    const ratio = currentItem?.width && currentItem.height ? currentItem.width / currentItem.height : null;
+    // --frame-w / --frame-h are set per screen size in globals.css.
+    const sizeStyle = ratio
+        ? { width: `min(var(--frame-w), calc((var(--frame-h) - var(--frame-reserve)) * ${ratio.toFixed(4)}))`, aspectRatio: ratio }
+        : undefined;
+    const sizeClass = ratio ? "is-sized" : undefined;
 
+    const showCaption = captionIsVisible && currentItem;
+    const showPalette = paletteIsVisible && currentItem && currentItem.palette.length > 0;
 
-    const getRandomPainting = async (): Promise<any> =>{
-
-        if(catalog && figCaptionRef.current !== undefined) {
-
-            setImageSrc(LOADING_IMG);
-
-            const { AUTHOR, TITLE, DATE, URL } = catalog.painting[ Math.floor(Math.random() * catalog.painting.length ) ];
-
-            const item: HistoryItemType = {
-                name: `${AUTHOR} - ${TITLE} - ${DATE}`,
-                url: URL,
-                imageUrl: await getImageFromURL(URL)
-            };
-
-            if(figCaptionRef.current !== null){
-                figCaptionRef.current.innerHTML = item.name;
-            }
-
-            pushToHistory(item);
-            setCurrentItem(item);
-
-        }
-    };
-
-    useEffect(() => {
-        
-        if(isCatalogLoaded){
-
-            if(isPaused){
-                if(imageChangeInterval.current !== null) clearInterval(imageChangeInterval.current);
-            }else{
-                imageChangeInterval.current = setInterval(getRandomPainting,imageChangeDuration);
-            }
-
-        }
-
-    },[isPaused])
-
-    useEffect(() => {
-
-        if(isCatalogLoaded){
-            getRandomPainting()
-                .then(()=> imageChangeInterval.current = setInterval(getRandomPainting, imageChangeDuration) );
-        }
-
-    }, [isCatalogLoaded]);
-
-    useEffect(() => {
-
-        if(isCatalogLoaded){
-
-            if(imageChangeInterval.current !== null) clearInterval(imageChangeInterval.current);
-            imageChangeInterval.current = setInterval(getRandomPainting,imageChangeDuration);
-    
-        }
-
-    }, [imageChangeDuration]);
-
-    useEffect(() => {
-
-        if(isCatalogLoaded){
-            setImageSrc(currentItem?.imageUrl ?? LOADING_IMG);
-        }
-
-    }, [currentItem]);
-
-    return(
-        <figure className="fig">
-            <img id="frame-bg" src={imageSrc}  alt={"ambient"} className={ambientIsVisible ? "" : "d-none"}/>
-            <img id="frame" src={imageSrc} alt="empty-wga-frame" />
-            <figcaption
-                ref={figCaptionRef}
-                className={`figCaption bg-black color-white ${roboto.className} ${captionIsVisible ? "" : "d-none" }`}
-            >
-            </figcaption>
+    return (
+        <figure className={`fig ${showPalette ? "has-palette" : ""}`} aria-live="polite" data-ambient-level={ambientLevel}>
+            {ambientIsVisible && currentItem && (
+                <img
+                    key={`bg-${imageSrc}`}
+                    id="frame-bg"
+                    className={sizeClass}
+                    style={sizeStyle}
+                    src={imageSrc}
+                    alt=""
+                    aria-hidden="true"
+                />
+            )}
+            <img
+                key={imageSrc}
+                id="frame"
+                className={sizeClass}
+                style={sizeStyle}
+                src={imageSrc}
+                alt={currentItem ? `${currentItem.title} by ${currentItem.author}` : "Loading"}
+                onError={() => currentItem && setBrokenImage(currentItem.imageUrl)}
+            />
+            {status && (
+                <figcaption className={`figCaption bg-black color-white ${roboto.className}`}>{status}</figcaption>
+            )}
+            {!status && (showCaption || showPalette) && (
+                <figcaption className={`figCaption bg-black color-white ${roboto.className}`}>
+                    {showCaption && (
+                        <div className="caption-text">
+                            <a href={currentItem.url} target="_blank" rel="noreferrer" title="Open on wga.hu">
+                                <span className="caption-author">{currentItem.author}</span>
+                                {" - "}
+                                <cite>{currentItem.title}</cite>
+                                {currentItem.date && ` - ${currentItem.date}`}
+                            </a>
+                            {(currentItem.technique || currentItem.location) && (
+                                <small className="caption-details">
+                                    {[currentItem.technique, currentItem.location].filter(Boolean).join(" · ")}
+                                </small>
+                            )}
+                        </div>
+                    )}
+                    {showPalette && <Palette key={currentItem.id} colors={currentItem.palette} />}
+                </figcaption>
+            )}
         </figure>
-    )
+    );
 }
